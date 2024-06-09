@@ -92,50 +92,51 @@ async function updateJsonFile(filePath, data) {
     return await response.json();
 }
 
-$(document).ready(function() {
-    function fetchEmployees() {
-        fetchEmployees()
-            .then(response => response.json())
-            .then(data => {
-                const rows = data.values.slice(1); // Skip header row
-                $('#employee-table').DataTable({
-                    data: rows,
-                    columns: [
-                        { title: "ID" },
-                        { title: "Name" },
-                        { title: "Phone" },
-                        { title: "Company" },
-                        { title: "Action", orderable: false, searchable: false } // New column for actions
-                    ],
-                    createdRow: function(row, data, index) {
-                        const viewButton = `<button type="button" class="btn btn-primary btn-sm" onclick="editEmployee(${index})">View</button>`;
-                        const editButton = `<button type="button" class="btn btn-primary btn-sm" onclick="editEmployee(${index})">Edit</button>`;
-                        const deleteButton = `<button type="button" class="btn btn-danger btn-sm" onclick="deleteEmployee(${index})">Delete</button>`;
-                        $('td', row).eq(-1).html(`${viewButton} ${editButton} ${deleteButton}`);
-                    }
-                });
-            });
+// Function to set a cookie
+function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
     }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+}
 
-    if ($('#employee-table').length) {
-        fetchEmployees();
+// Function to get a cookie
+function getCookie(name) {
+    var nameEQ = name + "=";
+    var cookies = document.cookie.split(';');
+    for (var i = 0; i < cookies.length; i++) {
+        var cookie = cookies[i];
+        while (cookie.charAt(0) == ' ') {
+            cookie = cookie.substring(1, cookie.length);
+        }
+        if (cookie.indexOf(nameEQ) == 0) {
+            return cookie.substring(nameEQ.length, cookie.length);
+        }
     }
+    return null;
+}
 
-    // Function to edit employee
-    window.editEmployee = function(index) {
-        // Redirect to the edit page with the employee index as a query parameter
-        window.location.href = `edit-employee.html?index=${index}`;
-    };
+// Function to delete a cookie
+function deleteCookie(name) {
+    document.cookie = name + "=; Max-Age=-99999999;";
+}
+// Function to check if access token is expired
+function isTokenExpired(accessToken) {
+    if (!accessToken) return true; // Token is not valid if it's null or undefined
+    const decodedToken = parseJwt(accessToken);
+    if (!decodedToken || !decodedToken.exp) return true; // Invalid token or no expiry time
+    const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+    return decodedToken.exp < currentTime; // Compare expiry time with current time
+}
 
-    // Function to view employee
-    window.viewEmployee = function(index) {
-        // Redirect to the view page with the employee index as a query parameter
-        window.location.href = `view-employee.html?index=${index}`;
-    };
-
-    // Function to delete employee
-    window.deleteEmployee = function(index) {
-        // Here you would implement the logic to delete the employee
-        alert(`Delete employee at index ${index}`);
-    };
-});
+// Function to parse JWT token
+function parseJwt(token) {
+    try {
+        return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+        return null;
+    }
+}

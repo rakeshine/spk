@@ -1,22 +1,20 @@
 <html>
-  <body>
-    <script src="https://accounts.google.com/gsi/client" async></script>
-    <script>
-      function handleCredentialResponse(response) {
-        console.log("Encoded JWT ID token: " + response.credential);
-      }
-      window.onload = function () {
-        google.accounts.id.initialize({
-          client_id: "69218730923-69upkjn6p3umh5rs4qa8ja74h45jm817.apps.googleusercontent.com",
-          callback: handleCredentialResponse
-        });
-        google.accounts.id.renderButton(
-          document.getElementById("buttonDiv"),
-          { theme: "outline", size: "large" }  // customization attributes
-        );
-        google.accounts.id.prompt(); // also display the One Tap dialog
+  <head>
+    <meta
+      name="google-signin-client_id"
+      content="69218730923-69upkjn6p3umh5rs4qa8ja74h45jm817.apps.googleusercontent.com"
+    />
+    <script src="app.js"></script>
+    <script type="text/javascript">
+      function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        setCookie("access_token", googleUser.getAuthResponse().access_token, 1);
+        window.location.href = `home.html`;
       }
     </script>
-    <div id="buttonDiv"></div>
+  </head>
+  <body>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
   </body>
 </html>
