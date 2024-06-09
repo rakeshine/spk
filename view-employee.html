@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Employee</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">View Employee</h1>
+        <nav class="nav nav-pills mb-4">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="employee-list.html">Back to Employee List</a>
+        </nav>
+        <div id="employee-details">
+            <!-- Employee details will be populated dynamically here -->
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Function to retrieve and display employee details
+        $(document).ready(function() {
+            // Get the index of the employee from the URL query parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const index = urlParams.get('index');
+
+            // Fetch employee data from Google Sheets API
+            const sheetId = 'YOUR_GOOGLE_SHEET_ID';
+            const apiKey = 'YOUR_GOOGLE_API_KEY';
+            const endpoint = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/Sheet1?key=${apiKey}`;
+
+            fetch(endpoint)
+                .then(response => response.json())
+                .then(data => {
+                    const employee = data.values[index];
+                    if (employee) {
+                        // Construct HTML to display employee details
+                        const employeeDetailsHtml = `
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Aadhar Number:</strong> ${employee[0]}</p>
+                                    <p><strong>ID:</strong> ${employee[1]}</p>
+                                    <!-- Add other employee details here -->
+                                </div>
+                                <!-- Add additional columns if needed -->
+                            </div>
+                        `;
+
+                        // Display employee details
+                        $('#employee-details').html(employeeDetailsHtml);
+                    } else {
+                        // Handle error if employee data is not found
+                        $('#employee-details').html('<p>Employee not found</p>');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching employee data:', error);
+                    $('#employee-details').html('<p>Error fetching employee data</p>');
+                });
+        });
+    </script>
+</body>
+</html>

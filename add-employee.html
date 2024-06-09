@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add / Edit Employee</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script type="module">
+        import { Octokit, App } from "https://esm.sh/octokit";
+    </script>
+    <script type="module" src="app.js" defer></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Add / Edit Employee</h1>
+        <nav class="nav nav-pills mb-4">
+            <a class="nav-link" href="index.html">Home</a>
+            <a class="nav-link" href="employee-list.html">Employee List</a>
+        </nav>
+        <form id="employee-form" class="row g-3" onsubmit="return validateForm()">
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="aadhar" name="aadhar" placeholder="Aadhar Number" required>
+                <label for="aadhar">Aadhar Number</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="id" name="id" placeholder="Employee ID" required>
+                <label for="id">Employee ID</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+                <label for="name">Name</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="address" name="address" placeholder="Address">
+                <label for="address">Address</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="phone" name="phone" placeholder="Phone">
+                <label for="phone">Phone</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="email" class="form-control" id="email" name="email" placeholder="Email">
+                <label for="email">Email</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <select class="form-select" id="gender" name="gender" required>
+                    <option value="">Select Gender</option>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                </select>
+                <label for="gender">Gender</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="date" class="form-control" id="dateOfJoining" name="dateOfJoining">
+                <label for="dateOfJoining">Date of Joining</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="date" class="form-control" id="dateOfLeaving" name="dateOfLeaving">
+                <label for="dateOfLeaving">Date of Leaving</label>
+            </div>
+            <div class="form-floating col-md-6">
+                <input type="text" class="form-control" id="company" name="company" placeholder="Company" required>
+                <label for="company">Company</label>
+            </div>
+            <div class="form-floating col-12">
+                <textarea class="form-control" placeholder="Additional Information" id="additionalInfo" name="additionalInfo" style="height: 100px;"></textarea>
+                <label for="additionalInfo">Additional Information</label>
+            </div>
+            <div class="col-12">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+        </form>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function validateForm() {
+            var aadhar = document.forms["employee-form"]["aadhar"].value;
+            var id = document.forms["employee-form"]["id"].value;
+            var name = document.forms["employee-form"]["name"].value;
+            var phone = document.forms["employee-form"]["phone"].value;
+            var email = document.forms["employee-form"]["email"].value;
+            var gender = document.forms["employee-form"]["gender"].value;
+            var dateOfJoining = document.forms["employee-form"]["dateOfJoining"].value;
+            var dateOfLeaving = document.forms["employee-form"]["dateOfLeaving"].value;
+            var company = document.forms["employee-form"]["company"].value;
+            var additionalInfo = document.forms["employee-form"]["additionalInfo"].value;
+    
+            // Aadhar validation
+            if (aadhar === "" || isNaN(aadhar)) {
+                alert("Aadhar must be a number.");
+                return false;
+            }
+    
+            // Email validation
+            var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (email !== "" && !emailPattern.test(email)) {
+                alert("Please enter a valid email address.");
+                return false;
+            }
+    
+            // Mandatory field validation
+            if (aadhar === "" || id === "" || name === "" || gender === "" || company === "") {
+                alert("Please fill in required fields.");
+                return false;
+            }
+            addEmployee({aadhar, id, name, phone, email, gender, dateOfJoining, dateOfLeaving, company, additionalInfo});
+
+            // All validations passed, form can be submitted
+            return true;
+        }
+    </script>
+    
+</body>
+</html>
